@@ -23,4 +23,4 @@ Repository: https://github.com/bardss/TSD-PokerPlanning-Android
 * Jakub Anioła
 * Paulina Sielicka
 * Dmytro Zinkevych
-* Крістіан Сік
+* Kristian Sik
