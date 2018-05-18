@@ -11,9 +11,10 @@ using System;
 namespace PlanningPokerBackend.Migrations
 {
     [DbContext(typeof(PlanningPokerDbContext))]
-    partial class PlanningPokerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180518213932_CreatedInvitations")]
+    partial class CreatedInvitations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
