@@ -20,8 +20,8 @@ namespace PlanningPokerBackend.Controllers
             if (_context.Users.Count() == 0)
             {
                 _context.Users.AddRange(
-                    new User() { Email = "mail@mail.com", FirstName = "Kristian", LastName = "Sik", TableId = 2, IsOnline = true },
-                    new User() { Email = "mail@mail.com", FirstName = "Dmytro", LastName = "Zinkevych", TableId = 2, IsOnline = true }
+                    new User() { Email = "mail@mail.com", FirstName = "Kristian", LastName = "Sik", IsOnline = true },
+                    new User() { Email = "mail@mail.com", FirstName = "Dmytro", LastName = "Zinkevych", IsOnline = true }
                     );
                 _context.SaveChanges();
             }
