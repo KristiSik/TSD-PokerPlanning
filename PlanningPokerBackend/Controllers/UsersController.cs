@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PlanningPokerBackend.Models;
 using PlanningPokerBackend.Models.PostRequestBodyModels;
 
@@ -23,14 +24,14 @@ namespace PlanningPokerBackend.Controllers
         }
         public IEnumerable<User> GetAll()
         {
-            return _context.Users.ToList();
+            return _context.Users.Include(u => u.PlayTable).ToList();
         }
         [HttpGet("{id}")]
         public IActionResult GetById(int id) {
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
             {
-                return NotFound();
+                return BadRequest("User not found");
             }
             return new ObjectResult(user);
         }
@@ -38,7 +39,12 @@ namespace PlanningPokerBackend.Controllers
         public IActionResult Add([FromBody] AddUser user)
         {
             //TODO: email regex 
-            if (user.FirstName.Length >= 3 &
+            if (user != null &
+                !String.IsNullOrEmpty(user.FirstName) &
+                !String.IsNullOrEmpty(user.LastName) &
+                !String.IsNullOrEmpty(user.Email) &
+                !String.IsNullOrEmpty(user.Password) &
+                user.FirstName.Length >= 3 &
                 user.LastName.Length >=3 &
                 user.Email.Length >= 4 &
                 user.Password.Length >= 4)
@@ -66,7 +72,7 @@ namespace PlanningPokerBackend.Controllers
             User loginUser = _context.Users.FirstOrDefault(u => u.Email == user.Email & u.Password == passwordSHA);
             if (loginUser == null)
             {
-                return BadRequest();
+                return BadRequest("Wrong login/password");
             } else
             {
                 string token = GenerateToken();
