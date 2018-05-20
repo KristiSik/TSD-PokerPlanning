@@ -9,6 +9,27 @@ namespace PlanningPokerBackend.Models
             :base(options)
         {
         }
+
         public DbSet<User> Users { get; set; }
+        public DbSet<PlayTable> PlayTables { get; set; }
+        public DbSet<Invitation> Invitations { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PlayTable>()
+                .HasMany(pt => pt.Participants)
+                .WithOne(u => u.PlayTable);
+
+            modelBuilder.Entity<Invitation>()
+                .HasOne(i => i.Inviter);
+
+            modelBuilder.Entity<Invitation>()
+                .HasOne(i => i.Participant);
+
+            modelBuilder.Entity<Invitation>()
+                .HasOne(i => i.PlayTable);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

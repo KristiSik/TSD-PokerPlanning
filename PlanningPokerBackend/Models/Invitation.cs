@@ -5,15 +5,12 @@ using System.Threading.Tasks;
 
 namespace PlanningPokerBackend.Models
 {
-    public class User
+    public class Invitation
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public User Inviter { get; set; }
+        public User Participant { get; set; }
         public PlayTable PlayTable { get; set; }
         public string Token { get; set; }
-        public bool IsOnline { get; set; }
     }
 }
