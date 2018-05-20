@@ -20,6 +20,9 @@ namespace PlanningPokerBackend.Models
                 .HasMany(pt => pt.Participants)
                 .WithOne(u => u.PlayTable);
 
+            modelBuilder.Entity<PlayTable>()
+                .HasOne(pt => pt.Admin);
+
             modelBuilder.Entity<Invitation>()
                 .HasOne(i => i.Inviter);
 
