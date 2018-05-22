@@ -13,7 +13,7 @@ namespace PlanningPokerBackend
         public void ConfigureServices(IServiceCollection services)
         {
             // services.AddDbContext<PlanningPokerDbContext>(opt => opt.UseSqlServer(@"Server=DESKTOP-L30PQJR\SQLEXPRESS;Database=PlanningPokerDb;Trusted_Connection=True;"));
-            services.AddDbContext<PlanningPokerDbContext>(opt => opt.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=PlanningPokerDb;Trusted_Connection=True;"));
+            services.AddDbContext<PlanningPokerDbContext>(opt => opt.UseInMemoryDatabase());
             services.AddMvc()
                 .AddJsonOptions(options => {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
