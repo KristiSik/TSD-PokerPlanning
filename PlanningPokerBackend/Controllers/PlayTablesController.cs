@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlanningPokerBackend.Models;
@@ -9,7 +7,6 @@ using PlanningPokerBackend.Models.PostRequestBodyModels;
 
 namespace PlanningPokerBackend.Controllers
 {
-    [Route("api/[Controller]/[Action]")]
     public class PlayTablesController : Controller
     {
         private readonly PlanningPokerDbContext _context;
@@ -50,9 +47,10 @@ namespace PlanningPokerBackend.Controllers
                 playTable.Participants.ToList().ForEach(p => p.PlayTable = null);
                 _context.Remove(playTable);
             }
-            user.PlayTable = new PlayTable() { Admin = user };
+            var token = Guid.NewGuid().ToString("n").Substring(0, 5);
+            user.PlayTable = new PlayTable() { Admin = user, Token = token };
             _context.SaveChanges();
-            return Ok();
+            return Ok(token);
         }
         [HttpDelete]
         public IActionResult Delete([FromBody] TokenBody body)
@@ -74,32 +72,20 @@ namespace PlanningPokerBackend.Controllers
             return Ok();
         }
         [HttpPost]
-        public IActionResult AddParticipant([FromBody] TokenAndEmailBody body)
+        public IActionResult Join([FromBody] UserTokenAndTableToken body)
         {
             User user = _context.Users.FirstOrDefault(u => u.Token == body.UserToken);
             if (body.UserToken == null || body.UserToken == "" || user == null)
             {
-                return BadRequest("Wrong token");
+                return BadRequest("Wrong user token");
             }
-            User userToAdd = _context.Users.FirstOrDefault(u => u.Email == body.ParticipantEmail);
-            if (userToAdd == null)
-            {
-                return BadRequest("Wrong e-mail of participant");
-            }
-            // Just admin can add new participants
-            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).FirstOrDefault(pt => pt.Admin.Id == user.Id);
+            PlayTable playTable = _context.PlayTables.FirstOrDefault(pt => pt.Token == body.TableToken);
             if (playTable == null)
             {
-                return BadRequest("You have no tables");
+                return BadRequest("Table not found");
             }
-            if (playTable.Participants.Count(p => p.Id == userToAdd.Id) > 0)
-            {
-                return BadRequest("User is already a participant of this table");
-            }
-            playTable.Participants.Add(userToAdd);
-            userToAdd.PlayTable = playTable;
+            playTable.Participants.Add(user);
             _context.Update(playTable);
-            _context.Update(userToAdd);
             _context.SaveChanges();
             return Ok();
         }
@@ -113,9 +99,9 @@ namespace PlanningPokerBackend.Controllers
             PlayTable playTable = _context.PlayTables.Include(pt => pt.Participants).FirstOrDefault(pt => pt.Participants.Any(u => u.Id == user.Id));
             if (playTable == null)
             {
-                return BadRequest("You have no tables" + body.Token);
+                return BadRequest("You have no tables");
             }
-            return new ObjectResult(playTable.Participants.Select((p) => new { p.Id, p.FirstName, p.LastName }));
+            return new ObjectResult(playTable.Participants.Select((p) => new { p.Id, p.Email, p.FirstName, p.LastName }));
         }
         [HttpPost]
         public IActionResult KickParticipant([FromBody] TokenAndEmailBody body)
@@ -123,7 +109,7 @@ namespace PlanningPokerBackend.Controllers
             User user = _context.Users.FirstOrDefault(u => u.Token == body.UserToken);
             if (body.UserToken == null || body.UserToken == "" || user == null)
             {
-                return BadRequest("Wrong token" + body.UserToken);
+                return BadRequest("Wrong token");
             }
             User userToKick = _context.Users.FirstOrDefault(u => u.Email == body.ParticipantEmail);
             if (userToKick == null)

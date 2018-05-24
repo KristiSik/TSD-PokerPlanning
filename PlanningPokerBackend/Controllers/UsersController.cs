@@ -13,7 +13,6 @@ using PlanningPokerBackend.Models.PostRequestBodyModels;
 
 namespace PlanningPokerBackend.Controllers
 {
-    [Route("api/[controller]/[action]")]
     public class UsersController : Controller
     {
         private readonly PlanningPokerDbContext _context;
@@ -38,7 +37,8 @@ namespace PlanningPokerBackend.Controllers
         [HttpPost]
         public IActionResult Add([FromBody] AddUser user)
         {
-            //TODO: email regex 
+            //TODO: email regex
+            //TODO: password salt
             if (user != null &
                 !String.IsNullOrEmpty(user.FirstName) &
                 !String.IsNullOrEmpty(user.LastName) &
