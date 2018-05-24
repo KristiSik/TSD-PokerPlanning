@@ -19,11 +19,11 @@ x64/
 x86/
 bld/
 [Bb]in/
-[Oo]bj/
+# [Oo]bj/
 [Ll]og/
 
 PlanningPokerBackend/[Oo]bj/*
-PlanningPokerBackend/obj/project.assets.json
+!PlanningPokerBackend/obj/project.assets.json
 
 # Visual Studio 2015 cache/options directory
 .vs/
