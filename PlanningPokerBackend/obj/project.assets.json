@@ -1390,6 +1390,18 @@
           "lib/netstandard2.0/Microsoft.AspNetCore.StaticFiles.dll": {}
         }
       },
+      "Microsoft.AspNetCore.TestHost/2.0.3": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Hosting": "2.0.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.TestHost.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.AspNetCore.TestHost.dll": {}
+        }
+      },
       "Microsoft.AspNetCore.WebSockets/2.0.3": {
         "type": "package",
         "dependencies": {
@@ -5812,6 +5824,18 @@
         "lib/netstandard2.0/Microsoft.AspNetCore.StaticFiles.xml",
         "microsoft.aspnetcore.staticfiles.2.0.3.nupkg.sha512",
         "microsoft.aspnetcore.staticfiles.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.TestHost/2.0.3": {
+      "sha512": "EZ65v9cXSw7cGmYt3ctO1h6bkszo/+3X0eVp4itBaqxDZDqmuxAsGqRwxYTMt9mkdUi3pLyiH26PW+1euhV1wA==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.testhost/2.0.3",
+      "files": [
+        ".signature.p7s",
+        "lib/netstandard2.0/Microsoft.AspNetCore.TestHost.dll",
+        "lib/netstandard2.0/Microsoft.AspNetCore.TestHost.xml",
+        "microsoft.aspnetcore.testhost.2.0.3.nupkg.sha512",
+        "microsoft.aspnetcore.testhost.nuspec"
       ]
     },
     "Microsoft.AspNetCore.WebSockets/2.0.3": {
@@ -12658,6 +12682,7 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.0": [
       "Microsoft.AspNetCore.All >= 2.0.8",
+      "Microsoft.AspNetCore.TestHost >= 2.0.3",
       "Microsoft.EntityFrameworkCore.Tools >= 2.0.3",
       "Microsoft.NETCore.App >= 2.0.0"
     ]
@@ -12709,6 +12734,10 @@
           "Microsoft.AspNetCore.All": {
             "target": "Package",
             "version": "[2.0.8, )"
+          },
+          "Microsoft.AspNetCore.TestHost": {
+            "target": "Package",
+            "version": "[2.0.3, )"
           },
           "Microsoft.EntityFrameworkCore.Tools": {
             "target": "Package",

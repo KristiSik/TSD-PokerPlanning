@@ -5257,6 +5257,7 @@
         "framework": ".NETCoreApp,Version=v2.0",
         "dependencies": {
           "Microsoft.AspNetCore.All": "2.0.8",
+          "Microsoft.AspNetCore.TestHost": "2.0.3",
           "Microsoft.EntityFrameworkCore.Tools": "2.0.3",
           "Microsoft.NETCore.App": "2.0.0"
         },

@@ -25,6 +25,13 @@ namespace PlanningPokerBackend.Tests
             _client = _server.CreateClient();
         }
         [Fact]
+        public async Task PlayTables_Table_Exists()
+        {
+            var response = await _client.GetAsync("/api/playtables/getall");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+        [Fact]
         public async Task GetParticipants_Returns_Bad_Request_If_Wrong_Token()
         {
             var response = await _client.GetAsync("/api/playtables/getparticipants?token=1");

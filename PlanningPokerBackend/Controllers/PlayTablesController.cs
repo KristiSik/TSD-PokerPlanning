@@ -7,7 +7,6 @@ using PlanningPokerBackend.Models.PostRequestBodyModels;
 
 namespace PlanningPokerBackend.Controllers
 {
-    [Route("api/[Controller]/[Action]")]
     public class PlayTablesController : Controller
     {
         private readonly PlanningPokerDbContext _context;
