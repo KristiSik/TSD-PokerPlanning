@@ -31,29 +31,5 @@ namespace PlanningPokerBackend.Tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
-        [Fact]
-        public async Task Add_User_Action_Works_Good()
-        {
-            AddUser user = new AddUser() { Email = "somemail@mail.com", FirstName = "MyName", LastName = "MyLastName", Password = "12345" };
-
-            var response = await _client.PostAsync("/api/users/add", new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
-            response.EnsureSuccessStatusCode();
-
-            var list = JsonConvert.DeserializeObject<List<User>>((await _client.GetAsync("/api/users/getall").Result.Content.ReadAsStringAsync()));
-
-            Assert.Single(list);
-        }
-        [Fact]
-        public async Task Add_User_Action_Works_Good_2()
-        {
-            AddUser user = new AddUser() { Email = "somemail@mail.com", FirstName = "MyName", LastName = "MyLastName", Password = "12345" };
-
-            var response = await _client.PostAsync("/api/users/add", new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"));
-            response.EnsureSuccessStatusCode();
-
-            var list = JsonConvert.DeserializeObject<List<User>>((await _client.GetAsync("/api/users/getall").Result.Content.ReadAsStringAsync()));
-
-            Assert.Single(list);
-        }
     }
 }
