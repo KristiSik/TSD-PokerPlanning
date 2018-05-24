@@ -6,3 +6,6 @@ configuration: Release
 
 services:
   - mssql2016
+  
+before_build:
+  - nuget restore
