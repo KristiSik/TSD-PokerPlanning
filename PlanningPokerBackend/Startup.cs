@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PlanningPokerBackend.Models;
+using System;
 
 namespace PlanningPokerBackend
 {
@@ -29,8 +30,14 @@ namespace PlanningPokerBackend
 
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService <PlanningPokerDbContext>();
-                context.Database.Migrate();
+                var context = serviceScope.ServiceProvider.GetRequiredService<PlanningPokerDbContext>();
+                try
+                {
+                    context.Database.Migrate();
+                }
+                catch (Exception e)
+                {
+                }
             }
 
             app.UseMvc(routes =>
