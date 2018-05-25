@@ -31,12 +31,5 @@ namespace PlanningPokerBackend.Tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
-        [Fact]
-        public async Task GetParticipants_Returns_Bad_Request_If_Wrong_Token()
-        {
-            var response = await _client.GetAsync("/api/playtables/getparticipants?token=1");
-
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
     }
 }
