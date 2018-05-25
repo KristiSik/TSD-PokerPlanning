@@ -31,5 +31,13 @@ namespace PlanningPokerBackend.Tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+        [Fact]
+        public async Task DataSeeder_Created_Users()
+        {
+            var response = await _client.GetAsync("/api/users/getall");
+            response.EnsureSuccessStatusCode();
+            var users = JsonConvert.DeserializeObject<List<User>>(await response.Content.ReadAsStringAsync());
+            Assert.NotEmpty(users);
+        }
     }
 }

@@ -2,12 +2,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
 using PlanningPokerBackend.Models;
-using PlanningPokerBackend.Models.PostRequestBodyModels;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -28,8 +25,15 @@ namespace PlanningPokerBackend.Tests
         public async Task PlayTables_Table_Exists()
         {
             var response = await _client.GetAsync("/api/playtables/getall");
-
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+        [Fact]
+        public async Task DataSeeder_Created_PlayTable()
+        {
+            var response = await _client.GetAsync("/api/playtables/getall");
+            response.EnsureSuccessStatusCode();
+            var users = JsonConvert.DeserializeObject<List<PlayTable>>(await response.Content.ReadAsStringAsync());
+            Assert.NotEmpty(users);
         }
     }
 }
