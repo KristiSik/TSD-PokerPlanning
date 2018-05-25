@@ -1,4 +1,31 @@
-# Planning Poker Backend
+# Poker Planning
+
+Poznan University of Technology
+
+Software Engineering
+
+Technologies of Software Project
+
+### Project Backend
+
+Application Backend is written in C# ASP.NET Core 2.0.
+
+Repository: https://github.com/bardss/TSD-PokerPlanning
+
+### Project Frontend
+
+Application Frontend (Android mobile app) is written in Kotlin.
+
+Repository: https://github.com/bardss/TSD-PokerPlanning-Android
+
+### Authors:
+
+* Jakub Anioła
+* Paulina Sielicka
+* Dmytro Zinkevych
+* Kristian Sik
+
+# Planning Poker backend maintenance
 Next information applies to **server-side** of **Planning Poker** project. Information about **client-side** application you can find in [Poker Planning Android repository](https://github.com/bardss/TSD-PokerPlanning-Android).
 ## Tools
 List of tools, needed to develop the application:
