@@ -13,6 +13,8 @@ namespace PlanningPokerBackend.Models
         public DbSet<User> Users { get; set; }
         public DbSet<PlayTable> PlayTables { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
+        public DbSet<Game> Games { get; set; }
+        public DbSet<Answer> Answers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +33,16 @@ namespace PlanningPokerBackend.Models
 
             modelBuilder.Entity<Invitation>()
                 .HasOne(i => i.PlayTable);
+
+            modelBuilder.Entity<PlayTable>()
+                .HasOne(pt => pt.CurrentGame)
+                .WithOne(g => g.PlayTable);
+
+            modelBuilder.Entity<Game>()
+                .HasMany(g => g.Answers);
+
+            modelBuilder.Entity<Answer>()
+                .HasOne(a => a.User);
 
             base.OnModelCreating(modelBuilder);
         }
