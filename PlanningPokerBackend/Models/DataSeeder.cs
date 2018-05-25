@@ -18,13 +18,14 @@ namespace PlanningPokerBackend.Models
             {
                 return;
             }
+            // User.Password is encrypted from "password" 
             List<User> users = new List<User>() {
-                new User() { FirstName = "Dave", LastName = "Murray", Email = "davemurray@mail.com", Password = "encrypted_password" },
-                new User() { FirstName = "Adrian", LastName = "Smith", Email = "adriansmith@mail.com", Password = "my_password" },
-                new User() { FirstName = "Steve", LastName = "Harris", Email = "steveharris@mail.com", Password = "my_password" },
-                new User() { FirstName = "Janick", LastName = "Gers", Email = "janickgers@mail.com", Password = "my_password" },
-                new User() { FirstName = "Nick", LastName = "McBrain", Email = "nickmcbrain@mail.com", Password = "my_password" },
-                new User() { FirstName = "Bruce", LastName = "Dickinson", Email = "brucedickinson@mail.com", Password = "my_password" }
+                new User() { FirstName = "Dave", LastName = "Murray", Email = "davemurray@mail.com", Password = "W6ph5Mm5Pz8GgiULbPgzG37mj9g=" },
+                new User() { FirstName = "Adrian", LastName = "Smith", Email = "adriansmith@mail.com", Password = "W6ph5Mm5Pz8GgiULbPgzG37mj9g=" },
+                new User() { FirstName = "Steve", LastName = "Harris", Email = "steveharris@mail.com", Password = "W6ph5Mm5Pz8GgiULbPgzG37mj9g=" },
+                new User() { FirstName = "Janick", LastName = "Gers", Email = "janickgers@mail.com", Password = "W6ph5Mm5Pz8GgiULbPgzG37mj9g=" },
+                new User() { FirstName = "Nick", LastName = "McBrain", Email = "nickmcbrain@mail.com", Password = "W6ph5Mm5Pz8GgiULbPgzG37mj9g=" },
+                new User() { FirstName = "Bruce", LastName = "Dickinson", Email = "brucedickinson@mail.com", Password = "W6ph5Mm5Pz8GgiULbPgzG37mj9g=" }
             };
             PlayTable playTable = new PlayTable() { Admin = users.First(), Participants = users.Skip(1).ToList(), Token = "abcdef" };
             _context.Users.AddRange(users);
