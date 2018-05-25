@@ -31,13 +31,10 @@ namespace PlanningPokerBackend
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<PlanningPokerDbContext>();
-                try
-                {
-                    context.Database.Migrate();
-                }
-                catch (Exception e)
-                {
-                }
+                context.Database.Migrate();
+                
+                DataSeeder ds = new DataSeeder(context);
+                ds.SeedData();
             }
 
             app.UseMvc(routes =>
