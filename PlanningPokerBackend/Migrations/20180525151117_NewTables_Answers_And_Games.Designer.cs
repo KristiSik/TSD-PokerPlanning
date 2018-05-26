@@ -11,9 +11,10 @@ using System;
 namespace PlanningPokerBackend.Migrations
 {
     [DbContext(typeof(PlanningPokerDbContext))]
-    partial class PlanningPokerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180525151117_NewTables_Answers_And_Games")]
+    partial class NewTables_Answers_And_Games
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +38,7 @@ namespace PlanningPokerBackend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answer");
                 });
 
             modelBuilder.Entity("PlanningPokerBackend.Models.Game", b =>
@@ -49,7 +50,7 @@ namespace PlanningPokerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Games");
+                    b.ToTable("Game");
                 });
 
             modelBuilder.Entity("PlanningPokerBackend.Models.Invitation", b =>
