@@ -31,15 +31,17 @@ namespace PlanningPokerBackend
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<PlanningPokerDbContext>();
-                context.Database.Migrate();
+                // context.Database.Migrate();
                 
                 DataSeeder ds = new DataSeeder(context);
                 ds.SeedData();
             }
 
+            app.UseStaticFiles();
             app.UseMvc(routes =>
             {
                 routes.MapRoute("api", "api/{controller}/{action}");
+                routes.MapRoute("default", "{controller=Home}/{action=Index}");
             });
         }
     }
