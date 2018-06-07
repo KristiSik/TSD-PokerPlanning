@@ -36,5 +36,17 @@ namespace PlanningPokerBackend.Tests
             var response2 = await _client.PostAsync("/api/games/start", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = token }), Encoding.UTF8, "application/json"));
             Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
         }
+        [Fact]
+        public async Task IsStarted_Returns_True_If_Game_Is_Started()
+        {
+            LoginUser dave = new LoginUser() { Email = "davemurray@mail.com", Password = "password" };
+            var response = await _client.PostAsync("/api/users/login", new StringContent(JsonConvert.SerializeObject(dave), Encoding.UTF8, "application/json"));
+            string token = await response.Content.ReadAsStringAsync();
+            var response2 = await _client.PostAsync("/api/games/start", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = token }), Encoding.UTF8, "application/json"));
+            var response3 = await _client.PostAsync("/api/games/isstarted", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = token }), Encoding.UTF8, "application/json"));
+            response3.EnsureSuccessStatusCode();
+            string result = await response3.Content.ReadAsStringAsync();
+            Assert.Equal("true", result);
+        }
     }
 }
