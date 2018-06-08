@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using PlanningPokerBackend.Models;
 using PlanningPokerBackend.Models.PostRequestBodyModels;
@@ -21,7 +24,13 @@ namespace PlanningPokerBackend.Tests
         {
             // Arrange
             _server = new TestServer(new WebHostBuilder()
-                .UseStartup<Startup>());
+                .UseStartup<Startup>().ConfigureServices((IServiceCollection services) => {
+                    services.AddDbContext<PlanningPokerDbContext>(opt => opt.UseInMemoryDatabase("somedb"));
+                    services.AddMvc()
+                        .AddJsonOptions(options => {
+                            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                        });
+                }));
             _client = _server.CreateClient();
         }
         [Fact]
