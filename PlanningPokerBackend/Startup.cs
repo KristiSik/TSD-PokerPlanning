@@ -33,14 +33,16 @@ namespace PlanningPokerBackend
                 var context = serviceScope.ServiceProvider.GetRequiredService<PlanningPokerDbContext>();
                 // context.Database.Migrate();
                 context.Database.EnsureCreated();
-
+              
                 DataSeeder ds = new DataSeeder(context);
                 ds.SeedData();
             }
 
+            app.UseStaticFiles();
             app.UseMvc(routes =>
             {
                 routes.MapRoute("api", "api/{controller}/{action}");
+                routes.MapRoute("default", "{controller=Home}/{action=Index}");
             });
         }
     }
