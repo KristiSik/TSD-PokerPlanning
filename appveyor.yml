@@ -9,4 +9,4 @@ services:
   
 before_build:
   - nuget restore
-  - dotnet ef database update
+  - dotnet ef database update --project C:\projects\tsd-pokerplanning\PlanningPokerBackend\
