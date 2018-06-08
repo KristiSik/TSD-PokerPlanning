@@ -30,12 +30,61 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("Only admin can start new game");
             }
-            if (playTable.CurrentGame != null || !playTable.CurrentGame.IsFinished)
+            if (playTable.CurrentGame != null)
             {
-                _context.Remove(user.PlayTable.CurrentGame);
+                playTable.CurrentGame.IsFinished = true;
+                _context.Update(playTable.CurrentGame);
             }
             user.PlayTable.CurrentGame = new Game();
             _context.Update(user);
+            _context.SaveChanges();
+            return Ok();
+        }
+        public IActionResult IsStarted([FromBody] TokenBody body)
+        {
+            User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
+            if (body.Token == null || body.Token == "" || user == null)
+            {
+                return BadRequest("Wrong token");
+            }
+            if (user.PlayTable == null)
+            {
+                return BadRequest("You have no tables");
+            }
+            Game game = _context.Games.Include(g => g.PlayTable).FirstOrDefault(g => g.PlayTable == user.PlayTable && g.IsFinished == false);
+            if (game != null)
+            {
+                return Ok("true");
+            }
+            return Ok("false");
+        }
+        [HttpPost]
+        public IActionResult SendAnswer([FromBody] TokenAndAnswerBody body)
+        {
+            User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
+            if (body.Token == null || body.Token == "" || user == null)
+            {
+                return BadRequest("Wrong token");
+            }
+            if (user.PlayTable == null)
+            {
+                return BadRequest("You have no tables");
+            }
+            Game game = _context.Games.Include(g => g.PlayTable).Include(g => g.Answers).FirstOrDefault(g => g.PlayTable == user.PlayTable && g.IsFinished == false);
+            if (game == null)
+            {
+                return BadRequest("Game not started or is already finished");
+            }
+            if (game.Answers.Any(a => a.User == user))
+            {
+                return BadRequest("You already sent an answer");
+            }
+            if (string.IsNullOrEmpty(body.Answer))
+            {
+                return BadRequest("Answer can't be empty");
+            }
+            game.Answers.Add(new Answer() { User = user, Value = body.Answer });
+            _context.Update(game);
             _context.SaveChanges();
             return Ok();
         }
