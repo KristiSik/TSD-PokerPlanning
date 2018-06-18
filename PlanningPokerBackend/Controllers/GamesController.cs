@@ -25,10 +25,17 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("Wrong token");
             }
-            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).FirstOrDefault(pt => pt.Admin.Id == user.Id);
+            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt.Admin.Id == user.Id);
             if (playTable == null)
             {
                 return BadRequest("Only admin can start new game");
+            }
+            foreach(var participant in playTable.Participants.ToList())
+            {
+                if (participant.IsReady == false)
+                {
+                    return BadRequest("Not everyone is ready");
+                }
             }
             if (playTable.CurrentGame != null)
             {
