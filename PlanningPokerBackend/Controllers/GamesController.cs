@@ -77,7 +77,7 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("You have no tables");
             }
-            Game game = _context.Games.Include(g => g.PlayTable).Include(g => g.Answers).FirstOrDefault(g => g.PlayTable == user.PlayTable && g.IsFinished == false);
+            Game game = _context.Games.Include(g => g.PlayTable).ThenInclude(pt => pt.Participants).Include(g => g.Answers).FirstOrDefault(g => g.PlayTable == user.PlayTable && g.IsFinished == false);
             if (game == null)
             {
                 return BadRequest("Game not started or is already finished");
@@ -91,9 +91,41 @@ namespace PlanningPokerBackend.Controllers
                 return BadRequest("Answer can't be empty");
             }
             game.Answers.Add(new Answer() { User = user, Value = body.Answer });
+            if (game.Answers.Count == game.PlayTable.Participants.Count)
+            {
+                game.IsFinished = true;
+            }
             _context.Update(game);
             _context.SaveChanges();
             return Ok();
+        }
+        public IActionResult GetResults(TokenBody body)
+        {
+            User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
+            if (body.Token == null || body.Token == "" || user == null)
+            {
+                return BadRequest("Wrong token" + body.Token);
+            }
+            if (user.PlayTable == null)
+            {
+                return BadRequest("You have no tables");
+            }
+            Game game = _context.Games.Include(g => g.PlayTable).Include(g => g.Answers).FirstOrDefault(g => g.PlayTable == user.PlayTable);
+            if (game == null)
+            {
+                return BadRequest("Game not found");
+            }
+            else
+            if (game.IsFinished == false)
+            {
+                return BadRequest("Game is not finished yet");
+            }
+            var answers = new List<Answer>();
+            foreach(var answer in game.Answers)
+            {
+                answers.Add(_context.Answers.Include(a => a.User).First(a => a.Id == answer.Id));
+            }
+            return new ObjectResult(answers.Select(a => new { User = new { a.User.Email, a.User.FirstName, a.User.LastName }, a.Value }).OrderBy(a => a.Value));
         }
     }
 }
