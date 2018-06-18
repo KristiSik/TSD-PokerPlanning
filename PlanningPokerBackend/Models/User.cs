@@ -14,6 +14,6 @@ namespace PlanningPokerBackend.Models
         public string Password { get; set; }
         public PlayTable PlayTable { get; set; }
         public string Token { get; set; } = "";
-        public bool IsOnline { get; set; } = false;
+        public bool IsReady { get; set; }
     }
 }

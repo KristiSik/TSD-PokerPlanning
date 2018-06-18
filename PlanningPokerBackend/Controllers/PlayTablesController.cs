@@ -49,6 +49,8 @@ namespace PlanningPokerBackend.Controllers
             }
             var token = Guid.NewGuid().ToString("n").Substring(0, 5);
             user.PlayTable = new PlayTable() { Admin = user, Token = token };
+            user.IsReady = true;
+            _context.Update(user);
             _context.SaveChanges();
             return Ok(token);
         }
@@ -85,7 +87,9 @@ namespace PlanningPokerBackend.Controllers
                 return BadRequest("Table not found");
             }
             playTable.Participants.Add(user);
+            user.IsReady = false;
             _context.Update(playTable);
+            _context.Update(user);
             _context.SaveChanges();
             return Ok();
         }
@@ -101,7 +105,7 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("You have no tables");
             }
-            return new ObjectResult(playTable.Participants.Select((p) => new { p.Id, p.Email, p.FirstName, p.LastName }));
+            return new ObjectResult(playTable.Participants.Select((p) => new { p.Id, p.Email, p.FirstName, p.LastName, p.IsReady }));
         }
         [HttpPost]
         public IActionResult KickParticipant([FromBody] TokenAndEmailBody body)

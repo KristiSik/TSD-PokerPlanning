@@ -40,7 +40,7 @@ namespace PlanningPokerBackend.Controllers
             _context.SaveChanges();
             return Ok();
         }
-        public IActionResult IsStarted([FromBody] TokenBody body)
+        public IActionResult IsStarted(TokenBody body)
         {
             User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
             if (body.Token == null || body.Token == "" || user == null)
