@@ -77,7 +77,6 @@ namespace PlanningPokerBackend.Controllers
             {
                 string token = GenerateToken();
                 loginUser.Token = token;
-                loginUser.IsOnline = true;
                 _context.Users.Update(loginUser);
                 _context.SaveChanges();
                 return Ok(token);
@@ -90,10 +89,26 @@ namespace PlanningPokerBackend.Controllers
             if (logoutUser != null)
             {
                 logoutUser.Token = "";
-                logoutUser.IsOnline = false;
                 _context.Users.Update(logoutUser);
                 _context.SaveChanges();
             }
+            return Ok();
+        }
+        [HttpPost]
+        public IActionResult SetReadyStatus([FromBody] TokenAndIsReadyStatusBody body)
+        {
+            User user = _context.Users.FirstOrDefault(u => u.Token == body.UserToken);
+            if (body.UserToken == null || body.UserToken == "" || user == null)
+            {
+                return BadRequest("Wrong token");
+            }
+            if (body.IsReady == null)
+            {
+                return BadRequest("IsReady field is empty");
+            }
+            user.IsReady = body.IsReady??false;
+            _context.Update(user);
+            _context.SaveChanges();
             return Ok();
         }
         private string GenerateToken()

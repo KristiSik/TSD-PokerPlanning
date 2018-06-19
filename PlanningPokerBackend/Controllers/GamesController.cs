@@ -25,10 +25,17 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("Wrong token");
             }
-            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).FirstOrDefault(pt => pt.Admin.Id == user.Id);
+            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt.Admin.Id == user.Id);
             if (playTable == null)
             {
                 return BadRequest("Only admin can start new game");
+            }
+            foreach(var participant in playTable.Participants.ToList())
+            {
+                if (participant.IsReady == false)
+                {
+                    return BadRequest("Not everyone is ready");
+                }
             }
             if (playTable.CurrentGame != null)
             {
@@ -40,7 +47,7 @@ namespace PlanningPokerBackend.Controllers
             _context.SaveChanges();
             return Ok();
         }
-        public IActionResult IsStarted([FromBody] TokenBody body)
+        public IActionResult IsStarted(TokenBody body)
         {
             User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
             if (body.Token == null || body.Token == "" || user == null)
@@ -70,7 +77,7 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("You have no tables");
             }
-            Game game = _context.Games.Include(g => g.PlayTable).Include(g => g.Answers).FirstOrDefault(g => g.PlayTable == user.PlayTable && g.IsFinished == false);
+            Game game = _context.Games.Include(g => g.PlayTable).ThenInclude(pt => pt.Participants).Include(g => g.Answers).FirstOrDefault(g => g.PlayTable == user.PlayTable && g.IsFinished == false);
             if (game == null)
             {
                 return BadRequest("Game not started or is already finished");
@@ -84,9 +91,41 @@ namespace PlanningPokerBackend.Controllers
                 return BadRequest("Answer can't be empty");
             }
             game.Answers.Add(new Answer() { User = user, Value = body.Answer });
+            if (game.Answers.Count == game.PlayTable.Participants.Count)
+            {
+                game.IsFinished = true;
+            }
             _context.Update(game);
             _context.SaveChanges();
             return Ok();
+        }
+        public IActionResult GetResults(TokenBody body)
+        {
+            User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
+            if (body.Token == null || body.Token == "" || user == null)
+            {
+                return BadRequest("Wrong token" + body.Token);
+            }
+            if (user.PlayTable == null)
+            {
+                return BadRequest("You have no tables");
+            }
+            Game game = _context.Games.Include(g => g.PlayTable).Include(g => g.Answers).FirstOrDefault(g => g.PlayTable == user.PlayTable);
+            if (game == null)
+            {
+                return BadRequest("Game not found");
+            }
+            else
+            if (game.IsFinished == false)
+            {
+                return BadRequest("Game is not finished yet");
+            }
+            var answers = new List<Answer>();
+            foreach(var answer in game.Answers)
+            {
+                answers.Add(_context.Answers.Include(a => a.User).First(a => a.Id == answer.Id));
+            }
+            return new ObjectResult(answers.Select(a => new { User = new { a.User.Email, a.User.FirstName, a.User.LastName }, a.Value }).OrderBy(a => a.Value));
         }
     }
 }
