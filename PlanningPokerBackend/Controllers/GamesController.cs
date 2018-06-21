@@ -180,5 +180,31 @@ namespace PlanningPokerBackend.Controllers
                 return BadRequest("Game is not started");
             }
         }
+        [HttpPost]
+        public IActionResult SetTaskName([FromBody] TokenAndTaskNameBody body)
+        {
+            User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
+            if (body.Token == null || body.Token == "" || user == null)
+            {
+                return BadRequest("Wrong token");
+            }
+            if (body.TaskName == null)
+            {
+                return BadRequest("Task name is not specified");
+            }
+            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt == user.PlayTable);
+            if (playTable.Admin != user)
+            {
+                return BadRequest("Only admin set name of task");
+            }
+            if (playTable.CurrentGame != null && !playTable.CurrentGame.IsFinished)
+            {
+                playTable.CurrentGame.TaskName = body.TaskName;
+                _context.Update(playTable.CurrentGame);
+                _context.SaveChanges();
+                return Ok();
+            }
+            return BadRequest("Game is not started or is finished");
+        }
     }
 }
