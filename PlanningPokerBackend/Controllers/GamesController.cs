@@ -82,20 +82,21 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("Game not started or is already finished");
             }
-            if (game.Answers.Any(a => a.User == user))
-            {
-                return BadRequest("You already sent an answer");
-            }
             if (string.IsNullOrEmpty(body.Answer))
             {
                 return BadRequest("Answer can't be empty");
             }
-            game.Answers.Add(new Answer() { User = user, Value = body.Answer });
-            if (game.Answers.Count == game.PlayTable.Participants.Count)
+            Answer usersAnswer = game.Answers.FirstOrDefault(a => a.User == user);
+            if (usersAnswer != null)
             {
-                game.IsFinished = true;
+                usersAnswer.Value = body.Answer;
+                _context.Update(usersAnswer);
             }
-            _context.Update(game);
+            else
+            {
+                game.Answers.Add(new Answer() { User = user, Value = body.Answer });
+                _context.Update(game);
+            }
             _context.SaveChanges();
             return Ok();
         }
