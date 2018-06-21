@@ -20,13 +20,13 @@ namespace PlanningPokerBackend.Controllers
         [HttpPost]
         public IActionResult Start([FromBody] TokenBody body)
         {
-            User user = _context.Users.FirstOrDefault(u => u.Token == body.Token);
+            User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
             if (body.Token == null || body.Token == "" || user == null)
             {
                 return BadRequest("Wrong token");
             }
-            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt.Admin.Id == user.Id);
-            if (playTable == null)
+            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt == user.PlayTable);
+            if (playTable.Admin != user)
             {
                 return BadRequest("Only admin can start new game");
             }
@@ -43,7 +43,7 @@ namespace PlanningPokerBackend.Controllers
                 playTable.CurrentGame.IsFinished = true;
                 _context.Update(playTable.CurrentGame);
             }
-            user.PlayTable.CurrentGame = new Game();
+            playTable.CurrentGame = new Game();
             _context.Update(user);
             _context.SaveChanges();
             return Ok();
