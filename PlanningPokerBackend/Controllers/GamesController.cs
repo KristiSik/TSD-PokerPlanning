@@ -36,6 +36,7 @@ namespace PlanningPokerBackend.Controllers
                 {
                     return BadRequest("Not everyone is ready");
                 }
+                participant.IsReady = false;
             }
             if (playTable.CurrentGame != null)
             {
@@ -127,6 +128,38 @@ namespace PlanningPokerBackend.Controllers
                 answers.Add(_context.Answers.Include(a => a.User).First(a => a.Id == answer.Id));
             }
             return new ObjectResult(answers.Select(a => new { User = new { a.User.Email, a.User.FirstName, a.User.LastName }, a.Value }).OrderBy(a => a.Value));
+        }
+        [HttpPost]
+        public IActionResult SetReadyStatus([FromBody] TokenAndIsReadyStatusBody body)
+        {
+            User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.UserToken);
+            if (body.UserToken == null || body.UserToken == "" || user == null)
+            {
+                return BadRequest("Wrong token");
+            }
+            if (body.IsReady == null)
+            {
+                return BadRequest("IsReady field is empty");
+            }
+            user.IsReady = body.IsReady ?? false;
+            _context.Update(user);
+
+            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt == user.PlayTable);
+            bool everyOneIsReady = true;
+            foreach (var participant in playTable.Participants) {
+                if (!participant.IsReady)
+                {
+                    everyOneIsReady = false;
+                    break;
+                }
+            }
+            if (everyOneIsReady)
+            {
+                playTable.CurrentGame.IsFinished = true;
+                _context.Update(playTable.CurrentGame);
+            }
+            _context.SaveChanges();
+            return Ok();
         }
     }
 }
