@@ -100,12 +100,12 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("Wrong token");
             }
-            PlayTable playTable = _context.PlayTables.Include(pt => pt.Participants).FirstOrDefault(pt => pt.Participants.Any(u => u.Id == user.Id));
+            PlayTable playTable = _context.PlayTables.Include(pt => pt.Participants).Include(pt => pt.CurrentGame).FirstOrDefault(pt => pt.Participants.Any(u => u.Id == user.Id));
             if (playTable == null)
             {
                 return BadRequest("You have no tables");
             }
-            return new ObjectResult(playTable.Participants.Select((p) => new { p.Id, p.Email, p.FirstName, p.LastName, p.IsReady }));
+            return new ObjectResult(new { TaskName = playTable.CurrentTaskName ?? "", Participants = playTable.Participants.Select((p) => new { p.Id, p.Email, p.FirstName, p.LastName, p.IsReady }) });
         }
         [HttpPost]
         public IActionResult KickParticipant([FromBody] TokenAndEmailBody body)
@@ -120,7 +120,7 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("Wrong e-mail of participant");
             }
-            // Just admin can add new participants
+            // Only admin can add new participants
             PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).FirstOrDefault(pt => pt.Admin.Id == user.Id);
             if (playTable == null)
             {
@@ -134,6 +134,28 @@ namespace PlanningPokerBackend.Controllers
             userToKick.PlayTable = null;
             _context.Update(playTable);
             _context.Update(userToKick);
+            _context.SaveChanges();
+            return Ok();
+        }
+        [HttpPost]
+        public IActionResult SetTaskName([FromBody] TokenAndTaskNameBody body)
+        {
+            User user = _context.Users.Include(u => u.PlayTable).FirstOrDefault(u => u.Token == body.Token);
+            if (body.Token == null || body.Token == "" || user == null)
+            {
+                return BadRequest("Wrong token");
+            }
+            if (body.TaskName == null)
+            {
+                return BadRequest("Task name is not specified");
+            }
+            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).FirstOrDefault(pt => pt == user.PlayTable);
+            if (playTable.Admin != user)
+            {
+                return BadRequest("Only admin set name of task");
+            }
+            playTable.CurrentTaskName = body.TaskName;
+            _context.Update(playTable);
             _context.SaveChanges();
             return Ok();
         }
