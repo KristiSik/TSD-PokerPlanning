@@ -161,5 +161,24 @@ namespace PlanningPokerBackend.Controllers
             _context.SaveChanges();
             return Ok();
         }
+        public IActionResult IsFinished(TokenBody body)
+        {
+            User user = _context.Users.Include(u => u.PlayTable).ThenInclude(pt => pt.CurrentGame).FirstOrDefault(u => u.Token == body.Token);
+            if (body.Token == null || body.Token == "" || user == null)
+            {
+                return BadRequest("Wrong token");
+            }
+            if (user.PlayTable == null)
+            {
+                return BadRequest("You have no tables");
+            }
+            if (user.PlayTable.CurrentGame != null)
+            {
+                return Ok(user.PlayTable.CurrentGame.IsFinished);
+            } else
+            {
+                return BadRequest("Game is not started");
+            }
+        }
     }
 }
