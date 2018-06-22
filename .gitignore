@@ -24,6 +24,7 @@ bld/
 Properties/
 
 PlanningPokerBackend/[Oo]bj/
+PlanningPokerBackend.Tests/[Oo]bj/
 !PlanningPokerBackend/obj/project.assets.json
 
 # Visual Studio 2015 cache/options directory
