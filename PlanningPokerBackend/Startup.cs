@@ -33,7 +33,7 @@ namespace PlanningPokerBackend
                 var context = serviceScope.ServiceProvider.GetRequiredService<PlanningPokerDbContext>();
                 if (!context.Database.EnsureCreated())
                 {
-                    context.Database.Migrate();
+                    context.Database.EnsureCreated();
                 };
               
                 DataSeeder ds = new DataSeeder(context);
