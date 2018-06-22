@@ -32,6 +32,7 @@ namespace PlanningPokerBackend.Models
             users.First().PlayTable = new PlayTable() { Admin = users.First(), Participants = users.Skip(1).ToList(), Token = "abcdef" };
             _context.Users.AddRange(users);
             _context.SaveChanges();
+            _context.Entry(users.First()).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
         }
     }
 }
