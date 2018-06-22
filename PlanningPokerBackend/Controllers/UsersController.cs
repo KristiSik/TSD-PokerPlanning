@@ -23,6 +23,7 @@ namespace PlanningPokerBackend.Controllers
         }
         public IEnumerable<User> GetAll()
         {
+            var l = Convert.ToBase64String(new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes("passwordsalt")));
             return _context.Users.Include(u => u.PlayTable).ToList();
         }
         [HttpGet("{id}")]
@@ -53,12 +54,14 @@ namespace PlanningPokerBackend.Controllers
                 {
                     return BadRequest("Email already used");
                 }
+                string salt = GenerateSalt();
                 _context.Users.Add(new User()
                     {
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Email = user.Email,
-                        Password = Convert.ToBase64String(new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes(user.Password)))
+                        Password = Convert.ToBase64String(new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes(user.Password + salt))),
+                        Salt = salt
                     });
                 _context.SaveChanges();
                 return Ok();
@@ -68,9 +71,8 @@ namespace PlanningPokerBackend.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] LoginUser user)
         {
-            string passwordSHA = Convert.ToBase64String(new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes(user.Password)));
-            User loginUser = _context.Users.FirstOrDefault(u => u.Email == user.Email & u.Password == passwordSHA);
-            if (loginUser == null)
+            User loginUser = _context.Users.FirstOrDefault(u => u.Email == user.Email);
+            if (loginUser == null || Convert.ToBase64String(new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes(user.Password + loginUser.Salt))) != loginUser.Password)
             {
                 return BadRequest("Wrong login/password");
             } else
@@ -114,6 +116,24 @@ namespace PlanningPokerBackend.Controllers
         private string GenerateToken()
         {
             return Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("+", "").Replace("=", "");
+        }
+        private string GenerateSalt()
+        {
+            const string valid = "1234567890qwertyuiopasdfghjklzxcvbnmQAZWSXEDCRFVTGBYHNUJMIKOLP";
+            StringBuilder salt = new StringBuilder();
+            int length = new Random().Next(12, 36);
+            using (RNGCryptoServiceProvider rngC = new RNGCryptoServiceProvider())
+            {
+                byte[] uintBuffer = new byte[sizeof(uint)];
+                while (length-- > 0)
+                {
+                    rngC.GetBytes(uintBuffer);
+                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                    salt.Append(valid[(int)(num % (uint)valid.Length)]);
+                }
+            }
+
+            return salt.ToString();
         }
     }
 }
