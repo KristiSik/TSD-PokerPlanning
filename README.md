@@ -6,7 +6,7 @@ Software Engineering
 
 Technologies of Software Project
 
-### Project Backend
+### Project Backend [![Build status](https://ci.appveyor.com/api/projects/status/cqt39moft7ie68c5?svg=true)](https://ci.appveyor.com/project/KristiSik/tsd-pokerplanning-da343)
 
 Application Backend is written in C# ASP.NET Core 2.0.
 
