@@ -28,11 +28,8 @@ namespace PlanningPokerBackend
                 app.UseDeveloperExceptionPage();
             }
 
-            if (context.Database.EnsureCreated())
-            {
-                context.Database.Migrate();
-            };
-              
+            context.Database.EnsureCreated();
+            
             DataSeeder ds = new DataSeeder(context);
             ds.SeedData();
 
