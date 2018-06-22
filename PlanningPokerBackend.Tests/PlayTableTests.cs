@@ -32,8 +32,8 @@ namespace PlanningPokerBackend.Tests
         {
             var response = await _client.GetAsync("/api/playtables/getall");
             response.EnsureSuccessStatusCode();
-            var users = JsonConvert.DeserializeObject<List<PlayTable>>(await response.Content.ReadAsStringAsync());
-            Assert.NotEmpty(users);
+            var tables = JsonConvert.DeserializeObject<List<PlayTable>>(await response.Content.ReadAsStringAsync());
+            Assert.NotEmpty(tables);
         }
     }
 }
