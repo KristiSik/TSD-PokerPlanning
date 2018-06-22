@@ -24,17 +24,11 @@ namespace PlanningPokerBackend.Tests
         {
             // Arrange
             _server = new TestServer(new WebHostBuilder()
-                .UseStartup<Startup>().ConfigureServices((IServiceCollection services) => {
-                    services.AddDbContext<PlanningPokerDbContext>(opt => opt.UseInMemoryDatabase("somedb"));
-                    services.AddMvc()
-                        .AddJsonOptions(options => {
-                            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                        });
-                }));
+                .UseStartup<Startup>());
             _client = _server.CreateClient();
         }
         [Fact]
-        public async Task Game_Successfuly_Starts()
+        public async Task Game_Doesnt_Start_If_Not_Everyone_Is_Ready()
         {
             LoginUser dave = new LoginUser() { Email = "davemurray@mail.com", Password = "password" };
             var response = await _client.PostAsync("/api/users/login", new StringContent(JsonConvert.SerializeObject(dave), Encoding.UTF8, "application/json"));
@@ -43,19 +37,18 @@ namespace PlanningPokerBackend.Tests
             Assert.NotNull(token);
             Assert.NotEmpty(token);
             var response2 = await _client.PostAsync("/api/games/start", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = token }), Encoding.UTF8, "application/json"));
-            Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
+            string result = await response2.Content.ReadAsStringAsync();
+            Assert.Equal("Not everyone is ready", result);
         }
         [Fact]
-        public async Task IsStarted_Returns_True_If_Game_Is_Started()
+        public async Task Only_Admin_Of_Table_Can_Start_New_Game()
         {
-            LoginUser dave = new LoginUser() { Email = "davemurray@mail.com", Password = "password" };
+            LoginUser dave = new LoginUser() { Email = "steveharris@mail.com", Password = "password" };
             var response = await _client.PostAsync("/api/users/login", new StringContent(JsonConvert.SerializeObject(dave), Encoding.UTF8, "application/json"));
             string token = await response.Content.ReadAsStringAsync();
             var response2 = await _client.PostAsync("/api/games/start", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = token }), Encoding.UTF8, "application/json"));
-            var response3 = await _client.PostAsync("/api/games/isstarted", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = token }), Encoding.UTF8, "application/json"));
-            response3.EnsureSuccessStatusCode();
-            string result = await response3.Content.ReadAsStringAsync();
-            Assert.Equal("true", result);
+            string result = await response2.Content.ReadAsStringAsync();
+            Assert.Equal("Only admin can start new game", result);
         }
     }
 }

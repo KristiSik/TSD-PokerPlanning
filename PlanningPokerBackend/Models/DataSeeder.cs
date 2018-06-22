@@ -27,9 +27,8 @@ namespace PlanningPokerBackend.Models
                 new User() { FirstName = "Nick", LastName = "McBrain", Email = "nickmcbrain@mail.com", Password = "W6ph5Mm5Pz8GgiULbPgzG37mj9g=" },
                 new User() { FirstName = "Bruce", LastName = "Dickinson", Email = "brucedickinson@mail.com", Password = "W6ph5Mm5Pz8GgiULbPgzG37mj9g=" }
             };
-            PlayTable playTable = new PlayTable() { Admin = users.First(), Participants = users.Skip(1).ToList(), Token = "abcdef" };
+            users.First().PlayTable = new PlayTable() { Admin = users.First(), Participants = users.Skip(1).ToList(), Token = "abcdef" };
             _context.Users.AddRange(users);
-            _context.PlayTables.Add(playTable);
             _context.SaveChanges();
         }
     }

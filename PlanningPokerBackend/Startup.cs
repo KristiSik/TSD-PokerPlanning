@@ -13,7 +13,7 @@ namespace PlanningPokerBackend
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PlanningPokerDbContext>(opt => opt.UseSqlServer(@"Server=(local)\SQL2016;Database=master;User ID=sa;Password=Password12!"));
+            services.AddDbContext<PlanningPokerDbContext>(opt => opt.UseInMemoryDatabase("a"));
             services.AddMvc()
                 .AddJsonOptions(options => {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -28,8 +28,6 @@ namespace PlanningPokerBackend
                 app.UseDeveloperExceptionPage();
             }
 
-            context.Database.Migrate();
-            
             DataSeeder ds = new DataSeeder(context);
             ds.SeedData();
 
