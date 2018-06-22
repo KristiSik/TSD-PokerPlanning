@@ -11,9 +11,10 @@ using System;
 namespace PlanningPokerBackend.Migrations
 {
     [DbContext(typeof(PlanningPokerDbContext))]
-    partial class PlanningPokerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180621223436_Game_Has_TaskName")]
+    partial class Game_Has_TaskName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,6 +47,8 @@ namespace PlanningPokerBackend.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<bool>("IsFinished");
+
+                    b.Property<string>("TaskName");
 
                     b.HasKey("Id");
 
@@ -84,8 +87,6 @@ namespace PlanningPokerBackend.Migrations
                     b.Property<int?>("AdminId");
 
                     b.Property<int?>("CurrentGameId");
-
-                    b.Property<string>("CurrentTaskName");
 
                     b.Property<string>("Token");
 

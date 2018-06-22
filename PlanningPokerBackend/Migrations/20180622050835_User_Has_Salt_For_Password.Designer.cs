@@ -11,9 +11,10 @@ using System;
 namespace PlanningPokerBackend.Migrations
 {
     [DbContext(typeof(PlanningPokerDbContext))]
-    partial class PlanningPokerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180622050835_User_Has_Salt_For_Password")]
+    partial class User_Has_Salt_For_Password
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,6 +117,8 @@ namespace PlanningPokerBackend.Migrations
                     b.Property<string>("Password");
 
                     b.Property<int?>("PlayTableId");
+
+                    b.Property<string>("Salt");
 
                     b.Property<string>("Token");
 
