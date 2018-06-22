@@ -21,24 +21,20 @@ namespace PlanningPokerBackend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, PlanningPokerDbContext context)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            if (context.Database.EnsureCreated())
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService<PlanningPokerDbContext>();
-                if (context.Database.EnsureCreated())
-                {
-                    context.Database.Migrate();
-                };
+                context.Database.Migrate();
+            };
               
-                DataSeeder ds = new DataSeeder(context);
-                ds.SeedData();
-            }
+            DataSeeder ds = new DataSeeder(context);
+            ds.SeedData();
 
             app.UseStaticFiles();
             app.UseMvc(routes =>
