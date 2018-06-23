@@ -137,14 +137,37 @@ namespace PlanningPokerBackend.Controllers
             {
                 return BadRequest("Wrong token");
             }
+            if (user.PlayTable == null)
+            {
+                return BadRequest("You have no tables");
+            }
             if (body.IsReady == null)
             {
                 return BadRequest("IsReady field is empty");
             }
+
+            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt.Id == user.PlayTable.Id);
+            Game game = _context.Games.Include(g => g.Answers).FirstOrDefault(g => g.Id == playTable.CurrentGame.Id);
+            Answer answer = game.Answers.FirstOrDefault(a => a.User.Id == user.Id);
+            if (game == null)
+            {
+                return BadRequest("Game not started or is already finished");
+            }
+            if (body.IsReady == false)
+            {
+                if (answer != null)
+                {
+                    _context.Entry(answer).State = EntityState.Deleted;
+                }
+            } else
+            {
+                if (answer == null)
+                {
+                    return BadRequest("You didn't send answer");
+                }
+            }
             user.IsReady = body.IsReady ?? false;
             _context.Update(user);
-
-            PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt == user.PlayTable);
             bool everyOneIsReady = true;
             foreach (var participant in playTable.Participants) {
                 if (!participant.IsReady)
