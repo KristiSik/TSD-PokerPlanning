@@ -147,12 +147,12 @@ namespace PlanningPokerBackend.Controllers
             }
 
             PlayTable playTable = _context.PlayTables.Include(pt => pt.Admin).Include(pt => pt.CurrentGame).Include(pt => pt.Participants).FirstOrDefault(pt => pt.Id == user.PlayTable.Id);
-            Game game = _context.Games.Include(g => g.Answers).FirstOrDefault(g => g.Id == playTable.CurrentGame.Id);
-            Answer answer = game.Answers.FirstOrDefault(a => a.User.Id == user.Id);
-            if (game == null)
+            if (playTable.CurrentGame == null)
             {
                 return BadRequest("Game not started or is already finished");
             }
+            Game game = _context.Games.Include(g => g.Answers).FirstOrDefault(g => g.Id == playTable.CurrentGame.Id);
+            Answer answer = game.Answers.FirstOrDefault(a => a.User.Id == user.Id);
             if (body.IsReady == false)
             {
                 if (answer != null)
