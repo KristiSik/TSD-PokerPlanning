@@ -13060,7 +13060,7 @@
       ]
     },
     "System.Security.Cryptography.Xml/4.4.2": {
-      "sha512": "1m+fKVrApgKYMRuE0MF0vGjqy4XqAp1rCtyAzMXhJajMDDytMh/rHk9hp4M7KKk3QQZoWJUvyUY7xcw74w+JiQ==",
+      "sha512": "q9Dren/YP5jhRCkDvLfuaPpMTQzP97ANvzq/OoGgwK8YdLRSTABS9oW5/23OKoM2DRCuBrh4qaecD2YNhPtuzQ==",
       "type": "package",
       "path": "system.security.cryptography.xml/4.4.2",
       "files": [
@@ -14402,26 +14402,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\User\\.nuget\\packages\\": {},
+    "C:\\Users\\maciek\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
-    "restoreSettings": {
-      "hideWarningsAndErrors": true
-    },
     "restore": {
-      "projectUniqueName": "D:\\projects\\PlanningPokerBackend\\PlanningPokerBackend.Tests\\PlanningPokerBackend.Tests.csproj",
+      "projectUniqueName": "C:\\Kris\\TSD-PokerPlanning\\PlanningPokerBackend.Tests\\PlanningPokerBackend.Tests.csproj",
       "projectName": "PlanningPokerBackend.Tests",
-      "projectPath": "D:\\projects\\PlanningPokerBackend\\PlanningPokerBackend.Tests\\PlanningPokerBackend.Tests.csproj",
-      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "D:\\projects\\PlanningPokerBackend\\PlanningPokerBackend.Tests\\obj\\",
+      "projectPath": "C:\\Kris\\TSD-PokerPlanning\\PlanningPokerBackend.Tests\\PlanningPokerBackend.Tests.csproj",
+      "packagesPath": "C:\\Users\\maciek\\.nuget\\packages\\",
+      "outputPath": "C:\\Kris\\TSD-PokerPlanning\\PlanningPokerBackend.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\maciek\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -14434,8 +14431,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "D:\\projects\\PlanningPokerBackend\\PlanningPokerBackend\\PlanningPokerBackend.csproj": {
-              "projectPath": "D:\\projects\\PlanningPokerBackend\\PlanningPokerBackend\\PlanningPokerBackend.csproj"
+            "C:\\Kris\\TSD-PokerPlanning\\PlanningPokerBackend\\PlanningPokerBackend.csproj": {
+              "projectPath": "C:\\Kris\\TSD-PokerPlanning\\PlanningPokerBackend\\PlanningPokerBackend.csproj"
             }
           }
         }
