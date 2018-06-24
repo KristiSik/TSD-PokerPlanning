@@ -11,8 +11,8 @@ using System;
 namespace PlanningPokerBackend.Migrations
 {
     [DbContext(typeof(PlanningPokerDbContext))]
-    [Migration("20180525151117_NewTables_Answers_And_Games")]
-    partial class NewTables_Answers_And_Games
+    [Migration("20180618161905_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,7 +38,7 @@ namespace PlanningPokerBackend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Answer");
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("PlanningPokerBackend.Models.Game", b =>
@@ -50,7 +50,7 @@ namespace PlanningPokerBackend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Game");
+                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("PlanningPokerBackend.Models.Invitation", b =>
@@ -108,7 +108,7 @@ namespace PlanningPokerBackend.Migrations
 
                     b.Property<string>("FirstName");
 
-                    b.Property<bool>("IsOnline");
+                    b.Property<bool>("IsReady");
 
                     b.Property<string>("LastName");
 

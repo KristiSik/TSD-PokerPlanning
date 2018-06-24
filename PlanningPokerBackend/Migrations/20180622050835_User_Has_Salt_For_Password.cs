@@ -4,21 +4,21 @@ using System.Collections.Generic;
 
 namespace PlanningPokerBackend.Migrations
 {
-    public partial class Table_NowHasToken : Migration
+    public partial class User_Has_Salt_For_Password : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Token",
-                table: "PlayTables",
+                name: "Salt",
+                table: "Users",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Token",
-                table: "PlayTables");
+                name: "Salt",
+                table: "Users");
         }
     }
 }

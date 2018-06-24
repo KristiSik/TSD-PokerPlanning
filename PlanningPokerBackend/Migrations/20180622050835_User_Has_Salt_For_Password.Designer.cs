@@ -11,8 +11,8 @@ using System;
 namespace PlanningPokerBackend.Migrations
 {
     [DbContext(typeof(PlanningPokerDbContext))]
-    [Migration("20180520081246_PlayTableInitializeListOfParticipants")]
-    partial class PlayTableInitializeListOfParticipants
+    [Migration("20180622050835_User_Has_Salt_For_Password")]
+    partial class User_Has_Salt_For_Password
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,38 @@ namespace PlanningPokerBackend.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.0.3-rtm-10026")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("PlanningPokerBackend.Models.Answer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("GameId");
+
+                    b.Property<int?>("UserId");
+
+                    b.Property<string>("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Answers");
+                });
+
+            modelBuilder.Entity("PlanningPokerBackend.Models.Game", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("IsFinished");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Games");
+                });
 
             modelBuilder.Entity("PlanningPokerBackend.Models.Invitation", b =>
                 {
@@ -52,9 +84,19 @@ namespace PlanningPokerBackend.Migrations
 
                     b.Property<int?>("AdminId");
 
+                    b.Property<int?>("CurrentGameId");
+
+                    b.Property<string>("CurrentTaskName");
+
+                    b.Property<string>("Token");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AdminId");
+
+                    b.HasIndex("CurrentGameId")
+                        .IsUnique()
+                        .HasFilter("[CurrentGameId] IS NOT NULL");
 
                     b.ToTable("PlayTables");
                 });
@@ -68,13 +110,15 @@ namespace PlanningPokerBackend.Migrations
 
                     b.Property<string>("FirstName");
 
-                    b.Property<bool>("IsOnline");
+                    b.Property<bool>("IsReady");
 
                     b.Property<string>("LastName");
 
                     b.Property<string>("Password");
 
                     b.Property<int?>("PlayTableId");
+
+                    b.Property<string>("Salt");
 
                     b.Property<string>("Token");
 
@@ -83,6 +127,17 @@ namespace PlanningPokerBackend.Migrations
                     b.HasIndex("PlayTableId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("PlanningPokerBackend.Models.Answer", b =>
+                {
+                    b.HasOne("PlanningPokerBackend.Models.Game")
+                        .WithMany("Answers")
+                        .HasForeignKey("GameId");
+
+                    b.HasOne("PlanningPokerBackend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("PlanningPokerBackend.Models.Invitation", b =>
@@ -105,6 +160,10 @@ namespace PlanningPokerBackend.Migrations
                     b.HasOne("PlanningPokerBackend.Models.User", "Admin")
                         .WithMany()
                         .HasForeignKey("AdminId");
+
+                    b.HasOne("PlanningPokerBackend.Models.Game", "CurrentGame")
+                        .WithOne("PlayTable")
+                        .HasForeignKey("PlanningPokerBackend.Models.PlayTable", "CurrentGameId");
                 });
 
             modelBuilder.Entity("PlanningPokerBackend.Models.User", b =>

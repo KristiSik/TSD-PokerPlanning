@@ -85,6 +85,8 @@ namespace PlanningPokerBackend.Migrations
 
                     b.Property<int?>("CurrentGameId");
 
+                    b.Property<string>("CurrentTaskName");
+
                     b.Property<string>("Token");
 
                     b.HasKey("Id");
@@ -107,7 +109,7 @@ namespace PlanningPokerBackend.Migrations
 
                     b.Property<string>("FirstName");
 
-                    b.Property<bool>("IsOnline");
+                    b.Property<bool>("IsReady");
 
                     b.Property<string>("LastName");
 
