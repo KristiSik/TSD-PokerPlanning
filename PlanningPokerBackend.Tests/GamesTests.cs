@@ -8,6 +8,7 @@ using PlanningPokerBackend.Models;
 using PlanningPokerBackend.Models.PostRequestBodyModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -64,7 +65,7 @@ namespace PlanningPokerBackend.Tests
             Assert.Equal("true", result);
         }
         [Fact]
-        public async Task IsFinished_Returns_True_When_All_Participants_Are_With_Their_Answers()
+        public async Task IsFinished_Returns_True_When_All_Participants_Are_Ready_With_Their_Answers()
         {
             foreach (var user in DataSeeder.Users)
             {
@@ -73,11 +74,38 @@ namespace PlanningPokerBackend.Tests
             var response2 = await _client.PostAsync("/api/games/start", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = DataSeeder.Users.Find(u => u.FirstName == "Dave").Token }), Encoding.UTF8, "application/json"));
             foreach (var user in DataSeeder.Users)
             {
-                var response = await _client.PostAsync("/api/games/setreadystatus", new StringContent(JsonConvert.SerializeObject(new TokenAndIsReadyStatusBody() { UserToken = user.Token, IsReady = true }), Encoding.UTF8, "application/json"));
+                var responseSendAnswer = await _client.PostAsync("/api/games/sendanswer", new StringContent(JsonConvert.SerializeObject(new TokenAndAnswerBody() { Token = user.Token, Answer = "31" }), Encoding.UTF8, "application/json"));
+                var responseSetReadyStatus = await _client.PostAsync("/api/games/setreadystatus", new StringContent(JsonConvert.SerializeObject(new TokenAndIsReadyStatusBody() { UserToken = user.Token, IsReady = true }), Encoding.UTF8, "application/json"));
             }
             var response3 = await _client.GetAsync(string.Format("/api/games/isfinished?token={0}", DataSeeder.Users.Find(u => u.FirstName == "Steve").Token));
             var result = await response3.Content.ReadAsStringAsync();
             Assert.Equal("true", result);
+        }
+        [Fact]
+        public async Task User_Cant_Set_True_Ready_Status_While_Didnt_Send_Answer()
+        {
+            foreach (var user in DataSeeder.Users)
+            {
+                var response = await _client.PostAsync("/api/users/setreadystatus", new StringContent(JsonConvert.SerializeObject(new TokenAndIsReadyStatusBody() { UserToken = user.Token, IsReady = true }), Encoding.UTF8, "application/json"));
+            }
+            var response2 = await _client.PostAsync("/api/games/start", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = DataSeeder.Users.Find(u => u.FirstName == "Dave").Token }), Encoding.UTF8, "application/json"));
+            var responseSetReadyStatus = await _client.PostAsync("/api/games/setreadystatus", new StringContent(JsonConvert.SerializeObject(new TokenAndIsReadyStatusBody() { UserToken = DataSeeder.Users.First(u => u.FirstName == "Dave").Token, IsReady = true }), Encoding.UTF8, "application/json"));
+            var result = await responseSetReadyStatus.Content.ReadAsStringAsync();
+            Assert.Equal("You didn't send answer", result);
+        }
+        [Fact]
+        public async Task Answer_Removed_When_User_Is_Not_Ready()
+        {
+            foreach (var user in DataSeeder.Users)
+            {
+                var response = await _client.PostAsync("/api/users/setreadystatus", new StringContent(JsonConvert.SerializeObject(new TokenAndIsReadyStatusBody() { UserToken = user.Token, IsReady = true }), Encoding.UTF8, "application/json"));
+            }
+            var response2 = await _client.PostAsync("/api/games/start", new StringContent(JsonConvert.SerializeObject(new TokenBody() { Token = DataSeeder.Users.Find(u => u.FirstName == "Dave").Token }), Encoding.UTF8, "application/json"));
+            var responseSendAnswer = await _client.PostAsync("/api/games/sendanswer", new StringContent(JsonConvert.SerializeObject(new TokenAndAnswerBody() { Token = DataSeeder.Users.Find(u => u.FirstName == "Dave").Token, Answer = "31" }), Encoding.UTF8, "application/json"));
+            var responseSetNotReadyStatus = await _client.PostAsync("/api/games/setreadystatus", new StringContent(JsonConvert.SerializeObject(new TokenAndIsReadyStatusBody() { UserToken = DataSeeder.Users.First(u => u.FirstName == "Dave").Token, IsReady = false }), Encoding.UTF8, "application/json"));
+            var responseSetReadyStatus = await _client.PostAsync("/api/games/setreadystatus", new StringContent(JsonConvert.SerializeObject(new TokenAndIsReadyStatusBody() { UserToken = DataSeeder.Users.First(u => u.FirstName == "Dave").Token, IsReady = true }), Encoding.UTF8, "application/json"));
+            var result = await responseSetReadyStatus.Content.ReadAsStringAsync();
+            Assert.Equal("You didn't send answer", result);
         }
     }
 }
